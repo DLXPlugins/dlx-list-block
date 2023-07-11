@@ -9,20 +9,23 @@
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./block.json */ "./src/blocks/list-block/block.json");
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
-/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./edit */ "./src/blocks/list-block/edit.js");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./block.json */ "./src/blocks/list-block/block.json");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
+/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./edit */ "./src/blocks/list-block/edit.js");
 
 
 
 
-(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_0__, {
-  edit: _edit__WEBPACK_IMPORTED_MODULE_3__["default"],
+
+(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_3__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_1__, {
+  edit: _edit__WEBPACK_IMPORTED_MODULE_4__["default"],
   save: () => {
-    return _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useInnerBlocksProps.save();
+    return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.InnerBlocks.Content, null);
   }
 });
 
@@ -71,14 +74,17 @@ const ListBlock = props => {
     clientId
   } = props;
 
+  // Set a reference to the innerBlocks.
+  const innerBlocksRef = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
+
+  // Get child blocks reference.
+  const childBlocks = wp.data.select('core/block-editor').getBlocks(clientId);
+
   // Extract out the attributes.
   const {
     uniqueId,
     listType
   } = attributes;
-
-  // Set a reference to the innerBlocks.
-  const [innerBlocksRef, setInnerBlocksRef] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
 
   // Set block props.
   const blockProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.useBlockProps)({
@@ -88,7 +94,7 @@ const ListBlock = props => {
   // Set InnerBlock props.
   const innerBlocksProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.useInnerBlocksProps)({
     className: 'dlx-list-block__inner',
-    ref: setInnerBlocksRef
+    ref: innerBlocksRef
   }, {
     template: [['dlxplugins/dlx-list-item-block'], ['dlxplugins/dlx-list-item-block'], ['dlxplugins/dlx-list-item-block']],
     allowedBlocks: ['dlxplugins/dlx-list-item-block'],
@@ -104,6 +110,45 @@ const ListBlock = props => {
       uniqueId: generatedUniqueId
     });
   }, []);
+
+  /**
+   * Select the first paragraph block when first rendered.
+   */
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    if (innerBlocksRef && 'undefined' !== typeof innerBlocksRef.current && childBlocks.length > 0) {
+      var _listItemBlock$, _firstListItem$innerB, _firstParagraph$clien;
+      // Get child blocks of list item element.
+      const listItemBlocks = wp.data.select('core/block-editor').getBlocksByClientId(clientId)[0].innerBlocks;
+
+      // If child blocks are empty, bail.
+      if (!listItemBlocks.length) {
+        return;
+      }
+
+      // Get the first list item.
+      const firstItem = listItemBlocks[0];
+      const firstItemClientId = firstItem.clientId;
+
+      // Get the first child child block.
+      const listItemBlock = wp.data.select('core/block-editor').getBlocksByClientId(firstItemClientId);
+      const firstListItem = (_listItemBlock$ = listItemBlock[0]) !== null && _listItemBlock$ !== void 0 ? _listItemBlock$ : null;
+
+      // Get the first child block's paragraph.
+      const firstParagraph = (_firstListItem$innerB = firstListItem.innerBlocks[0]) !== null && _firstListItem$innerB !== void 0 ? _firstListItem$innerB : [];
+      if (null === firstParagraph) {
+        return;
+      }
+
+      // Get the first child block's paragraph's client ID.
+      const firstParagraphClientId = (_firstParagraph$clien = firstParagraph.clientId) !== null && _firstParagraph$clien !== void 0 ? _firstParagraph$clien : null;
+      if (null === firstParagraphClientId) {
+        return;
+      }
+
+      // Select the first paragraph block via dispatch.
+      wp.data.dispatch('core/block-editor').selectBlock(firstParagraphClientId);
+    }
+  }, [innerBlocksRef, childBlocks]);
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("section", {
     ...blockProps
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
@@ -126,20 +171,23 @@ const ListBlock = props => {
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./block.json */ "./src/blocks/list-item-block/block.json");
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
-/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./edit */ "./src/blocks/list-item-block/edit.js");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./block.json */ "./src/blocks/list-item-block/block.json");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
+/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./edit */ "./src/blocks/list-item-block/edit.js");
 
 
 
 
-(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_0__, {
-  edit: _edit__WEBPACK_IMPORTED_MODULE_3__["default"],
+
+(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_3__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_1__, {
+  edit: _edit__WEBPACK_IMPORTED_MODULE_4__["default"],
   save: () => {
-    return _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useInnerBlocksProps.save();
+    return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.InnerBlocks.Content, null);
   }
 });
 
@@ -190,8 +238,24 @@ const ListItemBlock = props => {
     textColor,
     backgroundColor
   } = attributes;
+
+  // Set up innerblock reference.
+  const [innerBlocksRef, setInnerBlocksRef] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+
+  // Set block props.
   const blockProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.useBlockProps)({
     className: 'dlx-list-item-block'
+  });
+
+  // Set InnerBlock props.
+  const innerBlocksProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.useInnerBlocksProps)({
+    ...blockProps,
+    ref: setInnerBlocksRef
+  }, {
+    template: [['core/paragraph']],
+    allowedBlocks: ['core/paragraph'],
+    templateLock: false,
+    renderAppender: _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.InnerBlocks.DefaultBlockAppender
   });
 
   /**
@@ -202,10 +266,39 @@ const ListItemBlock = props => {
       uniqueId: generatedUniqueId
     });
   }, []);
+
+  // /**
+  //  * Select the first paragraph block when first rendered.
+  //  */
+  // useEffect( () => {
+  // 	if ( innerBlocksRef ) {
+  // 		// Get the currently selected block.
+  // 		const selectedBlock = wp.data.select( 'core/block-editor' ).getBlocks( clientId );
+
+  // 		console.log( isSelected, clientId, selectedBlock );
+
+  // 		// // Get ID attribute of paragraph.
+  // 		// const firstParagraphId = firstParagraphBlock.getAttribute( 'data-block' );
+
+  // 		// console.log( firstParagraphBlock );
+  // 		// console.log( firstParagraphId );
+
+  // 		// get data client id.
+  // 		//firstParagraphClientId = wp.data.select( 'core/block-editor' ).selectBlock( firstParagraphId ).clientId;
+
+  // 		// console.log( firstParagraphClientId );
+  // 		// wp.data.dispatch( 'core/block-editor' ).selectBlock( firstParagraphBlock.id );
+  // 	}
+  // }, [ innerBlocksRef ] );
+
+  const combinedProps = {
+    ...blockProps,
+    ...innerBlocksProps
+  };
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("li", {
     id: uniqueId,
-    ...blockProps
-  }, "InnerBlocks go here.");
+    ...combinedProps
+  });
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ListItemBlock);
 
