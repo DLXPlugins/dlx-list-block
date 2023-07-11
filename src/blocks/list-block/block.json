@@ -1,0 +1,37 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"title": "DLX List Block",
+	"apiVersion": 2,
+	"name": "dlxplugins/dlx-list-block",
+	"category": "common",
+	"icon": "editor-ul",
+	"keywords": [
+		"list",
+		"block",
+		"item",
+		"ordered",
+		"unordered"
+	],
+	"version": "1.0.0",
+	"textdomain": "dlx-list-block",
+	"attributes": {
+		"uniqueId": {
+			"type": "string",
+			"default": ""
+		},
+		"listType": {
+			"type": "string",
+			"default": "ul"
+		}
+	},
+	"supports": {
+		"anchor": true,
+		"align": true,
+		"className": true,
+		"html": false
+	},
+	"example": {
+		"attributes": {}
+	},
+	"editorScript": "dlx-list-block-editor"
+}

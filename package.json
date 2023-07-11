@@ -1,0 +1,26 @@
+{
+	"name": "dlx-list-block",
+	"version": "1.0.0",
+	"description": "A list block demonstrating InnerBlocks",
+	"main": "index.js",
+	"scripts": {
+		"start": "wp-scripts start --env mode=development",
+		"dev": "wp-scripts start --env mode=development",
+		"build": "wp-scripts build --env mode=production"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/DLXPlugins/dlx-list-block.git"
+	},
+	"author": "Ronald Huereca",
+	"license": "GPL-3.0-or-later",
+	"bugs": {
+		"url": "https://github.com/DLXPlugins/dlx-list-block/issues"
+	},
+	"homepage": "https://github.com/DLXPlugins/dlx-list-block#readme",
+	"devDependencies": {
+		"@wordpress/components": "^25.3.0",
+		"@wordpress/element": "^5.14.0",
+		"@wordpress/scripts": "^26.8.0"
+	}
+}
