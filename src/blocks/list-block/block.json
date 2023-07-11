@@ -33,5 +33,6 @@
 	"example": {
 		"attributes": {}
 	},
-	"editorScript": "dlx-list-block-editor"
+	"editorScript": "dlx-list-block-editor",
+	"editorStyle": "dlx-list-block-editor-css"
 }

@@ -28,12 +28,21 @@ add_action( 'init', __NAMESPACE__ . '\register_block_types' );
  * Register block types.
  */
 function register_block_types() {
-	// Get path to block.json.
+	// Get path to parent block block.json.
 	$block_json_path = plugin_dir_path( __FILE__ ) . 'build/blocks/list-block/block.json';
 	register_block_type(
 		$block_json_path,
 		array(
 			'render_callback' => __NAMESPACE__ . '\render_list_block',
+		)
+	);
+
+	// Get path to child block block.json.
+	$block_json_path = plugin_dir_path( __FILE__ ) . 'build/blocks/list-item-block/block.json';
+	register_block_type(
+		$block_json_path,
+		array(
+			'render_callback' => __NAMESPACE__ . '\render_list_item_block',
 		)
 	);
 }
@@ -48,6 +57,16 @@ function render_list_block( $attributes, $innerblocks_content ) {
 	return 'test content';
 }
 
+/**
+ * Render list item block.
+ *
+ * @param array  $attributes          Block attributes.
+ * @param string $innerblocks_content Inner blocks content.
+ */
+function render_list_item_block( $attributes, $innerblocks_content ) {
+	return 'test list item content';
+}
+
 // Enqueue block editor assets.
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_block_editor_assets' );
 
@@ -57,11 +76,21 @@ add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_block_edito
 function enqueue_block_editor_assets() {
 	$asset_file = include plugin_dir_path( __FILE__ ) . 'build/index.asset.php';
 
+	// Register main script, which registers a handle used in block.json.
 	wp_register_script(
 		'dlx-list-block-editor',
 		plugins_url( 'build/index.js', __FILE__ ),
 		$asset_file['dependencies'],
 		$asset_file['version'],
 		true
+	);
+
+	// Register block editor styles for backend.
+	wp_register_style(
+		'dlx-list-block-editor-css',
+		plugins_url( 'build/index.css', __FILE__ ),
+		array(),
+		$asset_file['version'],
+		'all'
 	);
 }
