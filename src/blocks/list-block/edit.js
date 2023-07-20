@@ -10,6 +10,15 @@ import { useBlockProps, useInnerBlocksProps, InnerBlocks } from '@wordpress/bloc
 import { useInstanceId } from '@wordpress/compose';
 import { useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import {
+	ToolbarGroup,
+	ToolbarDropdownMenu,
+	MenuGroup,
+	MenuItem,
+} from '@wordpress/components';
+import {
+	BlockControls
+} from '@wordpress/block-editor';
 
 const ListBlock = ( props ) => {
 	const generatedUniqueId = useInstanceId( ListBlock, 'dlx-list-block' );
@@ -99,18 +108,69 @@ const ListBlock = ( props ) => {
 			wp.data.dispatch( 'core/block-editor' ).selectBlock( firstParagraphClientId );
 		}
 	}, [ innerBlocksRef, childBlocks ] );
+
+	const blockToolbar = (
+		<BlockControls>
+			<ToolbarGroup>
+				<ToolbarDropdownMenu
+					icon="list-view"
+					label={ __( 'List Type', 'dlx-list-block' ) }
+				>
+					{ ( { onClose } ) => (
+						<>
+							<MenuGroup className="dlx-list-block__list-type-group">
+								<MenuItem
+									icon={ 'ul' === listType ? 'yes' : null }
+									isSelected={ 'ul' === listType }
+									onClick={ () => {
+										setAttributes( { listType: 'ul' } );
+										onClose();
+									} }
+								>
+									{ __( 'Unordered List', 'photo-block' ) }
+								</MenuItem>
+								<MenuItem
+									icon={ 'ol' === listType ? 'yes' : null }
+									isSelected={ 'ol' === listType }
+									onClick={ () => {
+										setAttributes( { listType: 'ol' } );
+										onClose();
+									} }
+								>
+									{ __( 'Ordered List', 'photo-block' ) }
+								</MenuItem>
+								<MenuItem
+									icon={ 'div' === listType ? 'yes' : null }
+									isSelected={ 'div' === listType }
+									onClick={ () => {
+										setAttributes( { listType: 'div' } );
+										onClose();
+									} }
+								>
+									{ __( 'Block List', 'photo-block' ) }
+								</MenuItem>
+							</MenuGroup>
+						</>
+					) }
+				</ToolbarDropdownMenu>
+			</ToolbarGroup>
+		</BlockControls>
+	);
 			
 	return (
-		<section { ...blockProps }>
-			<div id={ uniqueId } className="dlx-list-block__inner">
-				<div className="dlx-list-block-title">
-					{ __('DLX List Block', 'dlx-list-block' ) }
+		<>
+			{ blockToolbar }
+			<section { ...blockProps }>
+				<div id={ uniqueId } className="dlx-list-block__inner">
+					<div className="dlx-list-block-title">
+						{ __('DLX List Block', 'dlx-list-block' ) }
+					</div>
+					<ul>
+						<div { ...innerBlocksProps } />
+					</ul>
 				</div>
-				<ul>
-					<div { ...innerBlocksProps } />
-				</ul>
-			</div>
-		</section>
+			</section>
+		</>
 	);
 };
 export default ListBlock;

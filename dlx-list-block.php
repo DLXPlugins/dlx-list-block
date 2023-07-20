@@ -54,7 +54,13 @@ function register_block_types() {
  * @param string $innerblocks_content Inner blocks content.
  */
 function render_list_block( $attributes, $innerblocks_content ) {
-	return 'test content';
+	ob_start();
+	?>
+	<ul class="dlx-list-block">
+		<?php echo wp_kses_post( $innerblocks_content ); ?>
+	</ul>
+	<?php
+	return ob_get_clean();
 }
 
 /**
@@ -64,7 +70,13 @@ function render_list_block( $attributes, $innerblocks_content ) {
  * @param string $innerblocks_content Inner blocks content.
  */
 function render_list_item_block( $attributes, $innerblocks_content ) {
-	return 'test list item content';
+	ob_start();
+	?>
+	<li class="dlx-list-item-block">
+		<?php echo wp_kses_post( $innerblocks_content ); ?>
+	</li>
+	<?php
+	return ob_get_clean();
 }
 
 // Enqueue block editor assets.
